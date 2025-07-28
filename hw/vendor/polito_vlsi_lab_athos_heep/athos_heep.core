@@ -1,0 +1,146 @@
+CAPI=2:
+
+    # Solderpad Hardware License, Version 2.1, see LICENSE for details.
+    # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+name: polito:vlsi_lab:athos_heep
+description: "Accelerated Trusted Hardware for Optimal Security (RISC-V) integrated into X-HEEP"
+
+filesets:
+    files_rtl_generic:
+        depend:
+            - openhwgroup.org:systems:core-v-mini-mcu
+            - x-heep:ip:pad_control
+            - polito:vlsi_lab:athos
+        files:
+            - hw/wrapper/athos_wrapper.sv
+            - hw/vendor/esl_epfl_x_heep/hw/system/pad_ring.sv  
+            - hw/top/x_heep_system.sv
+        file_type: systemVerilogSource
+
+    tb:
+        depend:
+            - x-heep::tb-utils
+        files:
+            - tb/testharness.sv   # Your modified testharness
+        file_type: systemVerilogSource
+    tb_sv:
+        files:
+            - tb/tb_top.sv
+        file_type: systemVerilogSource
+    tb_cpp:
+        files:
+            - tb/tb_top.cpp
+        file_type: cppSource
+    
+    # Scripts for hooks
+    pre_build_uartdpi:
+        files:
+            - scripts/sim/compile_uart_dpi.sh  # Your modified scripts
+        file_type: user
+    pre_build_remote_bitbang:
+        files:
+            - scripts/sim/compile_remote_bitbang.sh  # Your modified scripts
+        file_type: user
+    pre_patch_modelsim_Makefile:
+        files:
+            - hw/vendor/esl_epfl_x_heep/scripts/sim/modelsim/patch_modelsim_Makefile.py
+        file_type: user
+    files_verilator_waiver:
+      depend:
+      - openhwgroup.org:ip:verilator_waiver
+      files:
+      - hw/vendor/esl_epfl_x_heep/hw/core-v-mini-mcu/core_v_mini_mcu.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/soc_ctrl/soc_ctrl.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/boot_rom/boot_rom.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/obi_spimemio/obi_spimemio.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/dma/dma.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/pdm2pcm/pdm2pcm.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip_examples/pdm2pcm_dummy/pdm2pcm_dummy.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/power_manager/power_manager.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/fast_intr_ctrl/fast_intr_ctrl.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/system/pad_control/pad_control.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/system/x_heep_system.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/simulation/simulation.vlt
+      - hw/vendor/esl_epfl_x_heep/hw/ip/i2s/i2s.vlt
+      file_type: vlt
+parameters:
+    COREV_PULP:
+        datatype: int
+        paramtype: vlogparam
+        default: 0
+    JTAG_DPI:
+        datatype: int
+        paramtype: vlogparam
+        default: 0
+    USE_EXTERNAL_DEVICE_EXAMPLE:
+        datatype: int
+        paramtype: vlogparam
+        default: 0
+    USE_UPF:
+      datatype: bool
+      paramtype: vlogdefine
+      description: |
+        Enables simulation with UPF with Modelsim/VCS
+scripts:
+    pre_build_remote_bitbang:
+        cmd:
+        - sh
+        - ../../../scripts/sim/compile_remote_bitbang.sh
+    pre_build_uartdpi:
+        cmd:
+        - sh
+        - ../../../scripts/sim/compile_uart_dpi.sh
+    pre_patch_modelsim_Makefile:
+        cmd:
+        - python
+        - ../../../hw/vendor/esl_epfl_x_heep/scripts/sim/modelsim/patch_modelsim_Makefile.py
+targets:
+    default: &default_target
+        filesets:
+        - files_rtl_generic
+    sim:
+        <<: *default_target
+        default_tool: modelsim
+        filesets_append:
+            - tb
+            - tool_modelsim? (pre_build_remote_bitbang)
+            - tool_modelsim? (tb_sv)
+            - tool_modelsim? (pre_build_uartdpi)
+            - tool_modelsim? (pre_patch_modelsim_Makefile)
+            - tool_verilator? (tb_cpp)
+            - target_sim ? (tool_verilator? (files_verilator_waiver))
+        toplevel:
+            - tool_modelsim? (tb_top)
+            - tool_verilator? (testharness)
+        hooks:
+            pre_build:
+                - tool_modelsim? (pre_build_uartdpi)
+                - tool_modelsim? (pre_build_remote_bitbang)
+                - tool_modelsim? (pre_patch_modelsim_Makefile) # this is required by Questa 2020 on
+        tools:
+            modelsim:
+                vlog_options:
+                    - -override_timescale 1ns/1ps
+                    - -suppress vlog-2583
+                    - -suppress vlog-2577
+                    - -define MODELSIM
+                vsim_options:
+                    - -voptargs=+acc
+                    - -sv_lib ../../../hw/vendor/esl_epfl_x_heep/hw/vendor/lowrisc_opentitan/hw/dv/dpi/uartdpi/uartdpi
+                    - -sv_lib ../../../hw/vendor/esl_epfl_x_heep/hw/vendor/pulp_platform_pulpissimo/rtl/tb/remote_bitbang/librbs
+            verilator:
+                mode: cc
+                verilator_options:
+                  - '--cc'
+                  - '--trace'
+                  - '--trace-fst'
+                  - '--trace-structs'
+                  - '--trace-params'
+                  - '--trace-max-array 1024'
+                  - '--x-assign unique'
+                  - '--x-initial unique'
+                  - '--exe tb_top.cpp'
+                  - '-CFLAGS "-std=c++11 -Wall -g -fpermissive"'
+                  - '-LDFLAGS "-pthread -lutil -lelf"'
+                  - "-Wall"

@@ -1,0 +1,76 @@
+CAPI=2:
+
+name: polito:vlsi_lab:athos
+description: "Accelerated Trusted Hardware for Optimal Security (RISC-V)"
+
+filesets:
+  rtl:
+    files:
+      - hw/rtl/athos_pkg.sv
+      - hw/rtl/load64.sv
+      - hw/rtl/barr.sv
+      - hw/rtl/gf_square.sv
+      - hw/rtl/montg.sv
+      - hw/rtl/trailing_zero_bits_count.sv
+      - hw/rtl/load24_littleEndian.sv
+      - hw/rtl/load32_littleEndian.sv
+      - hw/rtl/cbd.sv
+      - hw/rtl/poly_compress.sv
+      - hw/rtl/poly_decompress.sv
+      - hw/rtl/poly_tobytes.sv
+      - hw/rtl/poly_frombytes.sv
+      - hw/rtl/poly_tomsg.sv
+      - hw/rtl/poly_frommsg.sv 
+      - hw/rtl/rej_uniform.sv 
+      - hw/rtl/enum_mux.sv
+      - hw/rtl/xif_controller.sv
+      - hw/rtl/athos.sv
+      - hw/rtl/athos_top.sv
+    file_type: systemVerilogSource
+  tb:
+    files:
+      - tb/tb_athos.sv
+    file_type: systemVerilogSource
+
+scripts:
+  patch_run_tcl:
+    cmd:
+    - python3
+    - ../../../scripts/sim/modelsim/modelsim.py
+
+targets:
+  default: &default_target
+    filesets:
+    - rtl
+    toplevel: [athos_top]
+  sim:
+    filesets:
+      - rtl
+    description: Simulate the design
+    filesets_append:
+      - tb
+    toplevel:
+      - tool_modelsim? (tb)
+    tools:
+      modelsim:
+        vlog_options:
+          - -timescale=1ns/1ns
+        vsim_options:
+          - -voptargs=+acc
+    hooks:
+      pre_build:
+        - tool_modelsim? (patch_run_tcl) # this is required by Questa 2020 on
+  synth:
+    filesets:
+      - rtl
+    toplevel:
+      - athos_top
+    tools:
+      design_compiler:
+        script_dir:
+        - ../../../scripts/synth
+        report_dir:
+        - report
+        dc_script:
+        - synth.tcl
+ 

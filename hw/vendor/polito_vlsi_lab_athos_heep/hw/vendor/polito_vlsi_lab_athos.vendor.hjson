@@ -1,0 +1,17 @@
+// Copyright POLITO
+// Licensed under the Solderpad Hardware License v2.1, see LICENSE.txt for details
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+{
+  name: "polito_vlsi_lab_athos",
+  target_dir: "polito_vlsi_lab_athos",
+
+  upstream: {
+    url: "https://git.vlsilab.polito.it/alessandra.dolmeta/athos.git",
+    rev: "cvx",
+  },
+
+  exclude_from_upstream: [
+    "doc",
+  ]
+}

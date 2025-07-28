@@ -1,0 +1,9 @@
+#ignore all log files
+*.log
+
+*.elf
+*.bin
+*.hex
+
+#infore the build directory
+build

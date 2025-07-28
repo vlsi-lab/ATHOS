@@ -1,0 +1,3 @@
+build
+sw/build
+hw/vendor/esl_epfl_x_heep/tb/ext_bus.sv

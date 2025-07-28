@@ -1,0 +1,48 @@
+{
+    name: "athos_ip_ctrl",
+    clock_primary: "clk_i",
+    reset_primary: "rst_ni",
+    bus_interfaces: [
+    { protocol: "reg_iface", direction: "device" }
+    ],
+    regwidth: "32",
+    registers: [
+        { name: "CTRL"
+        	  desc: " Trigger athos_ip "
+        	  swaccess: "wo",
+        	  hwaccess: "hro",
+        	  //hwqe: "true",
+        	  fields: [
+        	    { bits: "0", name: "c0", desc: "Make athos_ip start" },
+				{ bits: "1", name: "c1", desc: "TBD" },
+				{ bits: "2", name: "c2", desc: "TBD" },
+				{ bits: "3", name: "c3", desc: "TBD" },
+				{ bits: "4", name: "c4", desc: "TBD" },
+				{ bits: "5", name: "c5", desc: "TBD" },
+				{ bits: "6", name: "c6", desc: "TBD" },
+				{ bits: "7", name: "c7", desc: "TBD" },
+				{ bits: "8", name: "c8", desc: "TBD" },
+				{ bits: "9", name: "c9", desc: "TBD" },
+				{ bits: "15:10", name: "OPERATION", desc: "Operation field for athos_ip" }
+			]
+        	},
+        	{ name: "STATUS"
+        	  desc: " Contains status information about athos_ip"
+        	  swaccess: "ro",
+        	  hwaccess: "hwo",
+        	  //hwext : "true",
+        	  fields: [
+				{ bits: "0", name: "s0", desc: "If set output of athos_ip is valid" },
+				{ bits: "1", name: "s1", desc: "TBD" },
+				{ bits: "2", name: "s2", desc: "TBD" },
+				{ bits: "3", name: "s3", desc: "TBD" },
+				{ bits: "4", name: "s4", desc: "TBD" },
+				{ bits: "5", name: "s5", desc: "TBD" },
+				{ bits: "6", name: "s6", desc: "TBD" },
+				{ bits: "7", name: "s7", desc: "TBD" },
+				{ bits: "8", name: "s8", desc: "TBD" },
+				{ bits: "9", name: "s9", desc: "TBD" },
+        	  ]	
+         }
+    ],
+}

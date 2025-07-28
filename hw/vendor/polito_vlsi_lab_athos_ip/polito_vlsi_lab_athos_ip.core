@@ -1,0 +1,74 @@
+CAPI=2:
+
+# Copyright 2023 POLITO
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+name: "polito:vlsi_lab:athos_ip"
+description: "ATHOS TC HDL"
+
+filesets:
+
+  files_rtl_sv:
+    depend:
+    - x-heep::packages
+    - pulp-platform.org::common_cells
+    files:
+    - hw/rtl/gen_sv/athos_ip_data_reg_pkg.sv
+    - hw/rtl/gen_sv/athos_ip_ctrl_reg_pkg.sv
+    - hw/rtl/gen_sv/athos_ip_data_reg_top.sv
+    - hw/rtl/gen_sv/athos_ip_ctrl_reg_top.sv
+    - hw/rtl/athos_ip_pkg.sv
+    - hw/rtl/keccak/keccak_cu.sv
+    - hw/rtl/ntt_intt/ntt_intt_top.sv
+    - hw/rtl/trng/INV.sv
+    - hw/rtl/trng/REG.sv
+    - hw/rtl/trng/SHIFT_REG.sv
+    - hw/rtl/trng/RO.sv
+    - hw/rtl/trng/top_level_RO.sv
+    - hw/rtl/trng/health_test.sv
+    - hw/rtl/trng/trng_cu.sv
+    - hw/rtl/trng/trng.sv
+    - hw/rtl/athos_ip_cu.sv
+    - hw/rtl/athos_ip_dp.sv
+    - hw/rtl/athos_ip.sv
+    - wrapper/athos_ip_top.sv
+    file_type: systemVerilogSource 
+
+  files_rtl_vhdl:
+    depend:
+    - x-heep::packages
+    - pulp-platform.org::common_cells
+    files:
+    - hw/rtl/keccak/keccak_globals.vhd
+    - hw/rtl/keccak/keccak_round_constants_gen.vhd
+    - hw/rtl/keccak/keccak_round.vhd
+    - hw/rtl/keccak/keccak_datapath.vhd
+    - hw/rtl/keccak/keccak.vhd
+    - hw/rtl/ntt_intt/param.vhd
+    - hw/rtl/ntt_intt/reg_rst.vhd
+    - hw/rtl/ntt_intt/reg_N_level_rst_n.vhd
+    - hw/rtl/ntt_intt/bN_2to1mux.vhd
+    - hw/rtl/ntt_intt/shiftreg.vhd
+    - hw/rtl/ntt_intt/BRAM.vhd
+    - hw/rtl/ntt_intt/BROM_TW.vhd
+    - hw/rtl/ntt_intt/adder.vhd
+    - hw/rtl/ntt_intt/full_adder.vhd
+    - hw/rtl/ntt_intt/half_adder.vhd
+    - hw/rtl/ntt_intt/intmul.vhd
+    - hw/rtl/ntt_intt/modadd.vhd
+    - hw/rtl/ntt_intt/modmul.vhd
+    - hw/rtl/ntt_intt/modsub.vhd
+    - hw/rtl/ntt_intt/address_generator.vhd
+    - hw/rtl/ntt_intt/barrett.vhd
+    - hw/rtl/ntt_intt/butterfly.vhd
+    - hw/rtl/ntt_intt/montgomery.vhd
+    - hw/rtl/ntt_intt/ntt_intt.vhd
+    file_type: vhdlSource  
+
+    
+targets:
+  default:
+    filesets:
+    - files_rtl_sv
+    - files_rtl_vhdl

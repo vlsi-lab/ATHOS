@@ -1,0 +1,38 @@
+{
+    name: "athos_ip_data",
+    clock_primary: "clk_i",
+    reset_primary: "rst_ni",
+    bus_interfaces: [
+    { protocol: "reg_iface", direction: "device" }
+    ],
+    regwidth: "32",
+    registers: [
+        { multireg:
+          { name: "din",
+            desc: "Input of ATHOS_ip module",
+            count: "50",
+            cname: "din",
+            swaccess: "wo",
+            hwqe : "true",
+            fields: [
+                { bits: "31:0"
+                }
+            ],
+          }
+        },
+        { multireg:
+          { name: "dout",
+            desc: "Output of ATHOS_ip module.",
+            count: "50",
+            cname: "dout",
+            swaccess: "ro",
+            hwaccess: "hwo",
+            hwext: "true",
+            fields: [
+                { bits: "31:0"
+                }
+            ],
+          }
+        },
+    ],
+}

@@ -1,0 +1,19 @@
+// Copyright EPFL
+// Licensed under the Solderpad Hardware License v2.1, see LICENSE.txt for details
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+{
+  name: "esl_epfl_x_heep",
+  target_dir: "esl_epfl_x_heep",
+
+  upstream: {
+    url: "https://github.com/vlsi-lab/x-heep.git",
+    rev: "feature/athos_cv32e40x",
+  },
+
+
+  exclude_from_upstream: [
+    ".github",
+    "ci",
+  ]
+}
